@@ -18,11 +18,13 @@ const AssessmentPage: React.FC = () => {
 
   return (
     <Layout>
-      <h2 className="text-2xl font-bold mb-4">Ransomware Readiness Assessment</h2>
-      <p className="mb-4">
-        Answer the following questions to assess your organization's ransomware readiness.
-      </p>
-      <QuestionForm questions={questions} onSubmit={handleSubmit} />
+      <div className="container">
+        <h1 className="text-3xl font-bold mb-6">Ransomware Readiness Assessment</h1>
+        <p className="mb-6">
+          Answer the following questions to assess your organization's ransomware readiness.
+        </p>
+        <QuestionForm questions={questions} onSubmit={handleSubmit} />
+      </div>
     </Layout>
   );
 };
