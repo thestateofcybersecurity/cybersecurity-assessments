@@ -11,18 +11,15 @@ export interface AssessmentResult {
   basicScore: number;
   intermediateScore: number;
   advancedScore: number;
-  categoryScores: {
-    [key: string]: number;
-  };
+  categoryScores: CategoryScore[];
 }
 
 export interface CategoryScore {
-  category: string;
+  name: string;
+  score: number;
   yes: number;
   no: number;
-  unanswered: number;
   total: number;
-  percentComplete: number;
 }
 
 export interface TierScore {
