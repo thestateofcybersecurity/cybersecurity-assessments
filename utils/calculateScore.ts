@@ -2,6 +2,7 @@ import { AssessmentResult, CategoryScore } from '../types';
 import { questions, categories } from './questions';
 
 export const calculateScore = (answers: Record<string, string>): AssessmentResult => {
+  const categoryScores: CategoryScore[] = [];
   let totalQuestions = questions.length;
   let answeredYes = 0;
 
