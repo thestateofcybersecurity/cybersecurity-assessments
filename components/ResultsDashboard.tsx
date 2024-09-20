@@ -1,7 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { AssessmentResult, CategoryScore } from '../types';
-import { getCategoryScores } from '../utils/calculateScore';
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
@@ -36,11 +35,11 @@ const ScoringTable: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
   </div>
 );
 
-const TierBarChart: React.FC<{ data: AssessmentResult }> = ({ data }) => {
+const TierBarChart: React.FC<{ data: { basicScore: number; intermediateScore: number; advancedScore: number } }> = ({ data }) => {
   const chartData = [
-    { tier: 'Basic', yes: data.basicScore, no: 100 - data.basicScore },
-    { tier: 'Intermediate', yes: data.intermediateScore, no: 100 - data.intermediateScore },
-    { tier: 'Advanced', yes: data.advancedScore, no: 100 - data.advancedScore },
+    { tier: 'Basic', complete: data.basicScore, incomplete: 100 - data.basicScore },
+    { tier: 'Intermediate', complete: data.intermediateScore, incomplete: 100 - data.intermediateScore },
+    { tier: 'Advanced', complete: data.advancedScore, incomplete: 100 - data.advancedScore },
   ];
 
   return (
@@ -56,18 +55,18 @@ const TierBarChart: React.FC<{ data: AssessmentResult }> = ({ data }) => {
           <YAxis dataKey="tier" type="category" />
           <Tooltip />
           <Legend />
-          <Bar dataKey="yes" stackId="a" fill="#82ca9d" name="Complete" />
-          <Bar dataKey="no" stackId="a" fill="#8884d8" name="Incomplete" />
+          <Bar dataKey="complete" stackId="a" fill="#82ca9d" name="Complete" />
+          <Bar dataKey="incomplete" stackId="a" fill="#8884d8" name="Incomplete" />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-const PerformancePieChart: React.FC<{ data: { yes: number; no: number; title: string } }> = ({ data }) => {
+const PerformancePieChart: React.FC<{ data: { complete: number; incomplete: number; title: string } }> = ({ data }) => {
   const pieData = [
-    { name: 'Complete', value: data.yes },
-    { name: 'Incomplete', value: data.no },
+    { name: 'Complete', value: data.complete },
+    { name: 'Incomplete', value: data.incomplete },
   ];
 
   return (
@@ -121,7 +120,7 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
         <p className="text-sm text-gray-600 mb-4">
           Your organization's overall ransomware readiness score. Higher is better.
         </p>
-        <PerformancePieChart data={{ yes: results.overallScore, no: 100 - results.overallScore, title: 'Overall Performance' }} />
+        <PerformancePieChart data={{ complete: results.overallScore, incomplete: 100 - results.overallScore, title: 'Overall Performance' }} />
       </section>
 
       <section className="mb-8">
@@ -131,15 +130,19 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
       
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">Practices Answered Per Tier</h3>
-        <TierBarChart data={results} />
+        <TierBarChart data={{
+          basicScore: results.basicScore,
+          intermediateScore: results.intermediateScore,
+          advancedScore: results.advancedScore
+        }} />
       </section>
       
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">Performance Summary</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <PerformancePieChart data={{ yes: results.basicScore, no: 100 - results.basicScore, title: 'Basic' }} />
-          <PerformancePieChart data={{ yes: results.intermediateScore, no: 100 - results.intermediateScore, title: 'Intermediate' }} />
-          <PerformancePieChart data={{ yes: results.advancedScore, no: 100 - results.advancedScore, title: 'Advanced' }} />
+          <PerformancePieChart data={{ complete: results.basicScore, incomplete: 100 - results.basicScore, title: 'Basic' }} />
+          <PerformancePieChart data={{ complete: results.intermediateScore, incomplete: 100 - results.intermediateScore, title: 'Intermediate' }} />
+          <PerformancePieChart data={{ complete: results.advancedScore, incomplete: 100 - results.advancedScore, title: 'Advanced' }} />
         </div>
       </section>
 
