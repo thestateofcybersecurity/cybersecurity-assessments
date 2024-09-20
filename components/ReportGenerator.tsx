@@ -1,11 +1,14 @@
 import { AssessmentResult } from '../types';
 import { questions } from '../utils/questions';
-import { jsPDF, autoTable } from 'jspdf';
+import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 const ReportGenerator = {
   generateReport: (results: AssessmentResult, answers: Record<string, string>) => {
     const doc = new jsPDF();
+
+    // Add the autoTable plugin to the jsPDF instance
+    const autoTable = (doc as any).autoTable;
 
     // Title
     doc.setFontSize(20);
@@ -18,7 +21,7 @@ const ReportGenerator = {
     // Assessment Tiers
     doc.setFontSize(14);
     doc.text('Assessment Tiers', 20, 60);
-    doc.autoTable({
+    autoTable(doc, {
       startY: 65,
       head: [['Tier', 'Score']],
       body: [
@@ -31,7 +34,7 @@ const ReportGenerator = {
     // Category Scores
     doc.setFontSize(14);
     doc.text('Category Scores', 20, doc.lastAutoTable.finalY + 20);
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 25,
       head: [['Category', 'Score', 'Yes', 'No']],
       body: results.categoryScores.map(category => [
@@ -45,7 +48,7 @@ const ReportGenerator = {
     // Detailed Answers
     doc.setFontSize(14);
     doc.text('Detailed Answers', 20, doc.lastAutoTable.finalY + 20);
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 25,
       head: [['Question', 'Answer']],
       body: questions.map(question => [
