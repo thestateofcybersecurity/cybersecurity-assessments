@@ -2,12 +2,15 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { AssessmentResult } from '../types';
+import Chart from './Chart';
+import { getCategoryScores } from '../utils/calculateScore';
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
 }
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
+  const categoryScores = getCategoryScores(results);
   const chartData = [
     { name: 'Overall', score: results.overallScore },
     { name: 'Basic', score: results.basicScore },
@@ -48,6 +51,7 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
         <div>
           <h4 className="text-lg font-medium mb-2">Advanced: {results.advancedScore}%</h4>
           <p className="text-sm text-gray-600">Sophisticated measures for comprehensive security.</p>
+          <Chart data={categoryScores} title="Category Scores" />
         </div>
       </div>
     </div>
