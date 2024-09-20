@@ -4,7 +4,7 @@ import { questions, categories } from './questions';
 
 export const calculateScore = (answers: Record<string, string>): AssessmentResult => {
   const totalQuestions = questions.length;
-  const categoryScores: Record<string, number> = {};
+  const categoryScores: CategoryScore[] = [];
   let basicScore = 0;
   let intermediateScore = 0;
   let advancedScore = 0;
@@ -12,8 +12,16 @@ export const calculateScore = (answers: Record<string, string>): AssessmentResul
   categories.forEach((category) => {
     const categoryQuestions = questions.filter((q) => q.id.startsWith(category.id));
     const categoryYesAnswers = categoryQuestions.filter((q) => answers[q.id] === 'yes').length;
+    const categoryNoAnswers = categoryQuestions.length - categoryYesAnswers;
     const categoryScore = (categoryYesAnswers / categoryQuestions.length) * 100;
-    categoryScores[category.id] = Math.round(categoryScore);
+    
+    categoryScores.push({
+      name: category.name,
+      score: Math.round(categoryScore),
+      yes: categoryYesAnswers,
+      no: categoryNoAnswers,
+      total: categoryQuestions.length
+    });
   });
 
   questions.forEach((question) => {
@@ -48,8 +56,5 @@ export const calculateScore = (answers: Record<string, string>): AssessmentResul
 };
 
 export const getCategoryScores = (results: AssessmentResult): CategoryScore[] => {
-  return categories.map((category) => ({
-    name: category.name,
-    score: results.categoryScores[category.id],
-  }));
+  return results.categoryScores;
 };
