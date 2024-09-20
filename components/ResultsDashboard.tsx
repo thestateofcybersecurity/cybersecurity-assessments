@@ -1,6 +1,18 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
-import { AssessmentResult, CategoryScore } from '../types';
+
+interface CategoryScore {
+  name: string;
+  yes: number;
+  no: number;
+  total: number;
+  score: number;
+}
+
+interface AssessmentResult {
+  overallScore: number;
+  categoryScores: CategoryScore[];
+}
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
@@ -35,12 +47,12 @@ const ScoringTable: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
   </div>
 );
 
-const TierBarChart: React.FC<{ data: { basicScore: number; intermediateScore: number; advancedScore: number } }> = ({ data }) => {
-  const chartData = [
-    { tier: 'Basic', complete: data.basicScore, incomplete: 100 - data.basicScore },
-    { tier: 'Intermediate', complete: data.intermediateScore, incomplete: 100 - data.intermediateScore },
-    { tier: 'Advanced', complete: data.advancedScore, incomplete: 100 - data.advancedScore },
-  ];
+const TierBarChart: React.FC<{ data: CategoryScore[] }> = ({ data }) => {
+  const chartData = data.map(item => ({
+    name: item.name,
+    Complete: item.score,
+    Incomplete: 100 - item.score
+  }));
 
   return (
     <div className="h-64">
@@ -52,11 +64,11 @@ const TierBarChart: React.FC<{ data: { basicScore: number; intermediateScore: nu
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
-          <YAxis dataKey="tier" type="category" />
+          <YAxis dataKey="name" type="category" width={150} />
           <Tooltip />
           <Legend />
-          <Bar dataKey="complete" stackId="a" fill="#82ca9d" name="Complete" />
-          <Bar dataKey="incomplete" stackId="a" fill="#8884d8" name="Incomplete" />
+          <Bar dataKey="Complete" stackId="a" fill="#82ca9d" />
+          <Bar dataKey="Incomplete" stackId="a" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -109,8 +121,6 @@ const RadarChartComponent: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
 );
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
-  const categoryScores = results.categoryScores;
-
   return (
     <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
       <h2 className="text-2xl font-bold mb-4">RRA Performance Summary</h2>
@@ -125,30 +135,17 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
 
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">RRA Practices Scoring</h3>
-        <ScoringTable data={categoryScores} />
+        <ScoringTable data={results.categoryScores} />
       </section>
       
       <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Practices Answered Per Tier</h3>
-        <TierBarChart data={{
-          basicScore: results.basicScore,
-          intermediateScore: results.intermediateScore,
-          advancedScore: results.advancedScore
-        }} />
+        <h3 className="text-xl font-bold mb-4">Practices Answered Per Category</h3>
+        <TierBarChart data={results.categoryScores} />
       </section>
       
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Performance Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <PerformancePieChart data={{ complete: results.basicScore, incomplete: 100 - results.basicScore, title: 'Basic' }} />
-          <PerformancePieChart data={{ complete: results.intermediateScore, incomplete: 100 - results.intermediateScore, title: 'Intermediate' }} />
-          <PerformancePieChart data={{ complete: results.advancedScore, incomplete: 100 - results.advancedScore, title: 'Advanced' }} />
-        </div>
-      </section>
-
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">Category Performance Overview</h3>
-        <RadarChartComponent data={categoryScores} />
+        <RadarChartComponent data={results.categoryScores} />
       </section>
     </div>
   );
