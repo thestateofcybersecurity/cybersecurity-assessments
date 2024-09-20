@@ -1,18 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
-
-interface CategoryScore {
-  name: string;
-  yes: number;
-  no: number;
-  total: number;
-  score: number;
-}
-
-interface AssessmentResult {
-  overallScore: number;
-  categoryScores: CategoryScore[];
-}
+import { AssessmentResult, CategoryScore } from '../types';
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
@@ -47,33 +35,20 @@ const ScoringTable: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
   </div>
 );
 
-const TierBarChart: React.FC<{ data: CategoryScore[] }> = ({ data }) => {
-  const chartData = data.map(item => ({
-    name: item.name,
-    Complete: item.score,
-    Incomplete: 100 - item.score
-  }));
-
-  return (
-    <div className="h-64">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={chartData}
-          layout="vertical"
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" />
-          <YAxis dataKey="name" type="category" width={150} />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="Complete" stackId="a" fill="#82ca9d" />
-          <Bar dataKey="Incomplete" stackId="a" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
+const CategoryBarChart: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
+  <div className="h-64">
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" width={150} />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="score" fill="#8884d8" name="Percent Complete" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
 const PerformancePieChart: React.FC<{ data: { complete: number; incomplete: number; title: string } }> = ({ data }) => {
   const pieData = [
@@ -139,10 +114,19 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
       </section>
       
       <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Practices Answered Per Category</h3>
-        <TierBarChart data={results.categoryScores} />
+        <h3 className="text-xl font-bold mb-4">Category Performance</h3>
+        <CategoryBarChart data={results.categoryScores} />
       </section>
       
+      <section className="mb-8">
+        <h3 className="text-xl font-bold mb-4">Tier Performance Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <PerformancePieChart data={{ complete: results.basicScore, incomplete: 100 - results.basicScore, title: 'Basic' }} />
+          <PerformancePieChart data={{ complete: results.intermediateScore, incomplete: 100 - results.intermediateScore, title: 'Intermediate' }} />
+          <PerformancePieChart data={{ complete: results.advancedScore, incomplete: 100 - results.advancedScore, title: 'Advanced' }} />
+        </div>
+      </section>
+
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">Category Performance Overview</h3>
         <RadarChartComponent data={results.categoryScores} />
