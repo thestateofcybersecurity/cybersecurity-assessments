@@ -1,14 +1,15 @@
-// components/QuestionForm.tsx
 import React, { useState } from 'react';
 import { Question } from '../types';
+import { questions } from '../utils/questions';
 
 interface QuestionFormProps {
-  questions: Question[];
   onSubmit: (answers: Record<string, string>) => void;
 }
 
-const QuestionForm: React.FC<QuestionFormProps> = ({ questions, onSubmit }) => {
+const QuestionForm: React.FC<QuestionFormProps> = ({ onSubmit }) => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [currentPage, setCurrentPage] = useState(0);
+  const questionsPerPage = 10;
 
   const handleChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -19,9 +20,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ questions, onSubmit }) => {
     onSubmit(answers);
   };
 
+  const currentQuestions = questions.slice(
+    currentPage * questionsPerPage,
+    (currentPage + 1) * questionsPerPage
+  );
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {questions.map((question) => (
+      {currentQuestions.map((question) => (
         <div key={question.id} className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
           <div className="md:grid md:grid-cols-3 md:gap-6">
             <div className="md:col-span-1">
@@ -37,6 +43,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ questions, onSubmit }) => {
                       type="radio"
                       value={option.value}
                       onChange={(e) => handleChange(question.id, e.target.value)}
+                      checked={answers[question.id] === option.value}
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
@@ -52,13 +59,32 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ questions, onSubmit }) => {
           </div>
         </div>
       ))}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Submit
-        </button>
+      <div className="flex justify-between">
+        {currentPage > 0 && (
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+          >
+            Previous
+          </button>
+        )}
+        {(currentPage + 1) * questionsPerPage < questions.length ? (
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Submit
+          </button>
+        )}
       </div>
     </form>
   );
