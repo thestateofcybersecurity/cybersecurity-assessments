@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import QuestionForm from '../components/QuestionForm';
 import { calculateScore } from '../utils/calculateScore';
-import { questions } from './utils/questions';
+import { questions } from '../utils/questions';
 
 const IndexPage: React.FC = () => {
   const router = useRouter();
