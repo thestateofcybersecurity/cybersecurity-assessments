@@ -1,17 +1,55 @@
 // utils/calculateScore.ts
-import { AssessmentResult } from '../types';
+import { AssessmentResult, CategoryScore } from '../types';
+import { questions, categories } from './questions';
 
 export const calculateScore = (answers: Record<string, string>): AssessmentResult => {
-  // Implement the scoring logic based on the provided assessment methodology
-  // This is a simplified example
-  const totalQuestions = Object.keys(answers).length;
-  const yesAnswers = Object.values(answers).filter((answer) => answer === 'yes').length;
-  const overallScore = (yesAnswers / totalQuestions) * 100;
+  const totalQuestions = questions.length;
+  const categoryScores: Record<string, number> = {};
+  let basicScore = 0;
+  let intermediateScore = 0;
+  let advancedScore = 0;
+
+  categories.forEach((category) => {
+    const categoryQuestions = questions.filter((q) => q.id.startsWith(category.id));
+    const categoryYesAnswers = categoryQuestions.filter((q) => answers[q.id] === 'yes').length;
+    const categoryScore = (categoryYesAnswers / categoryQuestions.length) * 100;
+    categoryScores[category.id] = Math.round(categoryScore);
+  });
+
+  questions.forEach((question) => {
+    if (answers[question.id] === 'yes') {
+      switch (question.category) {
+        case 'basic':
+          basicScore++;
+          break;
+        case 'intermediate':
+          intermediateScore++;
+          break;
+        case 'advanced':
+          advancedScore++;
+          break;
+      }
+    }
+  });
+
+  const basicTotal = questions.filter((q) => q.category === 'basic').length;
+  const intermediateTotal = questions.filter((q) => q.category === 'intermediate').length;
+  const advancedTotal = questions.filter((q) => q.category === 'advanced').length;
+
+  const overallScore = ((basicScore + intermediateScore + advancedScore) / totalQuestions) * 100;
 
   return {
     overallScore: Math.round(overallScore),
-    basicScore: Math.round(overallScore * 0.8), // Example calculation
-    intermediateScore: Math.round(overallScore * 0.6), // Example calculation
-    advancedScore: Math.round(overallScore * 0.4), // Example calculation
+    basicScore: Math.round((basicScore / basicTotal) * 100),
+    intermediateScore: Math.round((intermediateScore / intermediateTotal) * 100),
+    advancedScore: Math.round((advancedScore / advancedTotal) * 100),
+    categoryScores,
   };
+};
+
+export const getCategoryScores = (results: AssessmentResult): CategoryScore[] => {
+  return categories.map((category) => ({
+    name: category.name,
+    score: results.categoryScores[category.id],
+  }));
 };
