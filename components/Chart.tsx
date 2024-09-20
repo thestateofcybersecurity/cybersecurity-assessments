@@ -32,3 +32,5 @@ const Chart: React.FC<ChartProps> = ({ data, title }) => {
     </div>
   );
 };
+
+export default Chart;
