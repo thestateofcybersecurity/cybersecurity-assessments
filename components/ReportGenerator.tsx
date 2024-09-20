@@ -1,7 +1,7 @@
 import { AssessmentResult } from '../types';
 import { questions } from '../utils/questions';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const ReportGenerator = {
   generateReport: (results: AssessmentResult, answers: Record<string, string>) => {
