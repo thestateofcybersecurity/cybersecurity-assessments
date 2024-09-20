@@ -1,4 +1,3 @@
-// types/index.ts
 export interface Question {
   id: string;
   text: string;
@@ -20,19 +19,4 @@ export interface CategoryScore {
   yes: number;
   no: number;
   total: number;
-}
-
-export interface TierScore {
-  tier: string;
-  yes: number;
-  no: number;
-  unanswered: number;
-  total: number;
-}
-
-export interface PerformanceSummary {
-  tier: string;
-  yes: number;
-  no: number;
-  unanswered: number;
 }
