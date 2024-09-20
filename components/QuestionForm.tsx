@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Question } from '../types';
-import { questions } from '../utils/questions';
 
 interface QuestionFormProps {
+  questions: Question[];
   onSubmit: (answers: Record<string, string>) => void;
 }
 
-const QuestionForm: React.FC<QuestionFormProps> = ({ onSubmit }) => {
+const QuestionForm: React.FC<QuestionFormProps> = ({ questions, onSubmit }) => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentPage, setCurrentPage] = useState(0);
   const questionsPerPage = 10;
