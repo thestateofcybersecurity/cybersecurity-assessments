@@ -13,7 +13,9 @@ const ResultsPage: React.FC = () => {
   if (!results) {
     return (
       <Layout>
-        <p>No results available. Please complete the assessment first.</p>
+        <div className="container">
+          <p>No results available. Please complete the assessment first.</p>
+        </div>
       </Layout>
     );
   }
