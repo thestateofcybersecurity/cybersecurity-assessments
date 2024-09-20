@@ -10,11 +10,10 @@ const COLORS = ['#82ca9d', '#8884d8', '#ffc658'];
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
   const tierScores: TierScore[] = [
-    { tier: "Basic", yes: results.basicScore, no: 100 - results.basicScore },
-    { tier: "Intermediate", yes: results.intermediateScore, no: 100 - results.intermediateScore },
-    { tier: "Advanced", yes: results.advancedScore, no: 100 - results.advancedScore },
+    { tier: "Basic", yes: results.basicScore, no: 100 - results.basicScore, total: 100 },
+    { tier: "Intermediate", yes: results.intermediateScore, no: 100 - results.intermediateScore, total: 100 },
+    { tier: "Advanced", yes: results.advancedScore, no: 100 - results.advancedScore, total: 100 },
   ];
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Ransomware Readiness Assessment Results</h1>
