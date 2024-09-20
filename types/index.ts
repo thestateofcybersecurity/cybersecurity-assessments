@@ -17,6 +17,25 @@ export interface AssessmentResult {
 }
 
 export interface CategoryScore {
-  name: string;
-  score: number;
+  category: string;
+  yes: number;
+  no: number;
+  unanswered: number;
+  total: number;
+  percentComplete: number;
+}
+
+export interface TierScore {
+  tier: string;
+  yes: number;
+  no: number;
+  unanswered: number;
+  total: number;
+}
+
+export interface PerformanceSummary {
+  tier: string;
+  yes: number;
+  no: number;
+  unanswered: number;
 }
