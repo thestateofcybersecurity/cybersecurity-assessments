@@ -21,3 +21,16 @@ export interface CategoryScore {
   no: number;
   total: number;
 }
+
+export interface TierScore {
+  tier: string;
+  yes: number;
+  no: number;
+  total: number;
+}
+
+export interface PerformanceSummary {
+  tier: string;
+  yes: number;
+  no: number;
+}
