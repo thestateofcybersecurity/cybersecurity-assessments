@@ -1,4 +1,3 @@
-// utils/calculateScore.ts
 import { AssessmentResult, CategoryScore } from '../types';
 import { questions, categories } from './questions';
 
@@ -53,8 +52,4 @@ export const calculateScore = (answers: Record<string, string>): AssessmentResul
     advancedScore: Math.round((advancedScore / advancedTotal) * 100),
     categoryScores,
   };
-};
-
-export const getCategoryScores = (results: AssessmentResult): CategoryScore[] => {
-  return results.categoryScores;
 };
