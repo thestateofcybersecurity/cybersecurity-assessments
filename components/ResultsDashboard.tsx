@@ -1,122 +1,125 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { Bar, BarChart, Cell, Pie, PieChart, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AssessmentResult, CategoryScore } from '../types';
-import Chart from './Chart';
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
 }
 
-const COLORS = ['#82ca9d', '#8884d8', '#ffc658'];
-
-const ScoringTable: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
-  <div className="overflow-x-auto">
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
-        <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yes</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Practices</th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percent Complete</th>
-        </tr>
-      </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
-        {data.map((item, index) => (
-          <tr key={index}>
-            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.yes}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.no}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.total}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.score}%</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
-
-const PerformancePieChart: React.FC<{ data: { complete: number; incomplete: number; title: string } }> = ({ data }) => {
-  const pieData = [
-    { name: 'Complete', value: data.complete },
-    { name: 'Incomplete', value: data.incomplete },
-  ];
-
-  return (
-    <div className="h-64">
-      <h3 className="text-center font-bold">{data.title}</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={pieData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {pieData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-const RadarChartComponent: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
-  <div className="h-64">
-    <ResponsiveContainer width="100%" height="100%">
-      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-        <PolarGrid />
-        <PolarAngleAxis dataKey="name" />
-        <PolarRadiusAxis angle={30} domain={[0, 100]} />
-        <Radar name="Percent Complete" dataKey="score" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-      </RadarChart>
-    </ResponsiveContainer>
-  </div>
-);
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
+  const pieData = [
+    { name: 'Basic', value: results.basicScore },
+    { name: 'Intermediate', value: results.intermediateScore },
+    { name: 'Advanced', value: results.advancedScore },
+  ];
+
+  const radarData = results.categoryScores.map(category => ({
+    subject: category.name,
+    score: category.score,
+  }));
+
   return (
-    <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
-      <h2 className="text-2xl font-bold mb-4">RRA Performance Summary</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Ransomware Readiness Assessment Results</h1>
       
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Overall Score: {results.overallScore}%</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Your organization's overall ransomware readiness score. Higher is better.
-        </p>
-        <PerformancePieChart data={{ complete: results.overallScore, incomplete: 100 - results.overallScore, title: 'Overall Performance' }} />
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">RRA Practices Scoring</h3>
-        <ScoringTable data={results.categoryScores} />
-      </section>
-      
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Category Performance</h3>
-        <Chart data={results.categoryScores} title="Category Scores" />
-      </section>
-      
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Tier Performance Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <PerformancePieChart data={{ complete: results.basicScore, incomplete: 100 - results.basicScore, title: 'Basic' }} />
-          <PerformancePieChart data={{ complete: results.intermediateScore, incomplete: 100 - results.intermediateScore, title: 'Intermediate' }} />
-          <PerformancePieChart data={{ complete: results.advancedScore, incomplete: 100 - results.advancedScore, title: 'Advanced' }} />
+      <div className="card">
+        <h2 className="text-2xl font-bold mb-4">Overall Score: {results.overallScore}%</h2>
+        <p className="mb-4">Your organization's overall ransomware readiness score. Higher is better.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Basic: {results.basicScore}%</h3>
+            <p>Fundamental ransomware protection measures.</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Intermediate: {results.intermediateScore}%</h3>
+            <p>Advanced protection and detection capabilities.</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Advanced: {results.advancedScore}%</h3>
+            <p>Sophisticated measures for comprehensive security.</p>
+          </div>
         </div>
-      </section>
 
-      <section className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Category Performance Overview</h3>
-        <RadarChartComponent data={results.categoryScores} />
-      </section>
+        <div className="h-64 mb-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label={({ name, value }) => `${name}: ${value}%`}
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 className="text-2xl font-bold mb-4">Category Scores</h2>
+        <div className="h-96 mb-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={results.categoryScores}>
+              <Bar dataKey="score" fill="#8884d8" />
+              <Tooltip />
+              <Legend />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 className="text-2xl font-bold mb-4">Category Performance Overview</h2>
+        <div className="h-96 mb-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="subject" />
+              <PolarRadiusAxis angle={30} domain={[0, 100]} />
+              <Radar name="Score" dataKey="score" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+              <Tooltip />
+              <Legend />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 className="text-2xl font-bold mb-4">Detailed Category Scores</h2>
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="text-left">Category</th>
+              <th className="text-left">Score</th>
+              <th className="text-left">Yes</th>
+              <th className="text-left">No</th>
+              <th className="text-left">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.categoryScores.map((category, index) => (
+              <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : ''}>
+                <td>{category.name}</td>
+                <td>{category.score}%</td>
+                <td>{category.yes}</td>
+                <td>{category.no}</td>
+                <td>{category.total}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
