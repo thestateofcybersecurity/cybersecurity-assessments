@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { AssessmentResult, CategoryScore } from '../types';
+import Chart from './Chart';
 
 interface ResultsDashboardProps {
   results: AssessmentResult;
@@ -32,21 +33,6 @@ const ScoringTable: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
         ))}
       </tbody>
     </table>
-  </div>
-);
-
-const CategoryBarChart: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
-  <div className="h-64">
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis type="number" />
-        <YAxis dataKey="name" type="category" width={150} />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="score" fill="#8884d8" name="Percent Complete" />
-      </BarChart>
-    </ResponsiveContainer>
   </div>
 );
 
@@ -115,7 +101,7 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
       
       <section className="mb-8">
         <h3 className="text-xl font-bold mb-4">Category Performance</h3>
-        <CategoryBarChart data={results.categoryScores} />
+        <Chart data={results.categoryScores} title="Category Scores" />
       </section>
       
       <section className="mb-8">
