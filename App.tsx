@@ -6,6 +6,7 @@ import ReportGenerator from './components/ReportGenerator';
 import Layout from './components/Layout';
 import { calculateScore } from './utils/calculateScore';
 import { AssessmentResult } from './types';
+import { questions } from './utils/questions';
 
 const App: React.FC = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -28,7 +29,7 @@ const App: React.FC = () => {
   return (
     <Layout>
       {router.pathname === '/' && (
-        <QuestionForm onSubmit={handleSubmit} />
+        <QuestionForm questions={questions} onSubmit={handleSubmit} />
       )}
       {router.pathname === '/results' && results && (
         <>
