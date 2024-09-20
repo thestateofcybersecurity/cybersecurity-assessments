@@ -3,6 +3,7 @@ export interface Question {
   text: string;
   options: { value: string; label: string }[];
   category: 'basic' | 'intermediate' | 'advanced';
+  references: string;
 }
 
 export interface AssessmentResult {
