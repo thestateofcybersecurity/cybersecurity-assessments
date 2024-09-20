@@ -1,12 +1,9 @@
 import { AssessmentResult, CategoryScore } from '../types';
 import { questions, categories } from './questions';
 
-export const calculateScore = (answers: Record<string, string>): AssessmentResult => {
-  const totalQuestions = questions.length;
-  const categoryScores: CategoryScore[] = [];
-  let basicScore = 0;
-  let intermediateScore = 0;
-  let advancedScore = 0;
+export const calculateScore = (questions, answers) => {
+  let totalQuestions = questions.length;
+  let answeredYes = 0;
 
   categories.forEach((category) => {
     const categoryQuestions = questions.filter((q) => q.id.startsWith(category.id));
@@ -24,20 +21,15 @@ export const calculateScore = (answers: Record<string, string>): AssessmentResul
   });
 
   questions.forEach((question) => {
-    if (answers[question.id] === 'yes') {
-      switch (question.category) {
-        case 'basic':
-          basicScore++;
-          break;
-        case 'intermediate':
-          intermediateScore++;
-          break;
-        case 'advanced':
-          advancedScore++;
-          break;
-      }
+    const userAnswer = answers[question.id];
+    if (userAnswer === 'yes') {
+      answeredYes++;
     }
   });
+
+  let percentage = (answeredYes / totalQuestions) * 100;
+  return { answeredYes, totalQuestions, percentage };
+};
 
   const basicTotal = questions.filter((q) => q.category === 'basic').length;
   const intermediateTotal = questions.filter((q) => q.category === 'intermediate').length;
