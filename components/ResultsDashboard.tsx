@@ -110,7 +110,7 @@ const RadarChartComponent: React.FC<{ data: CategoryScore[] }> = ({ data }) => (
 );
 
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ results }) => {
-  const categoryScores = getCategoryScores(results);
+  const categoryScores = results.categoryScores;
 
   return (
     <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
