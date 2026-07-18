@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://cybersecurityalphabetsoup.com/assess/",
+      "permanent": true
+    }
+  ]
+}
